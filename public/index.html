@@ -8,6 +8,9 @@
       }
       .message {
       }
+      #sender {
+        width: 12em;
+      }
       .message-sender {
         color: #555;
       }
@@ -18,8 +21,8 @@
   </head>
   <body>
     <ul id="messages"></ul>
-    <input id="sender" type="text"/>
-    <input id="message" type="text"/>
+    <input id="sender" type="text"/><br/>
+    <textarea id="message" name="message" rows="10" cols="50"></textarea>
     <input id="send" type="button" value="Send"/>
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 
