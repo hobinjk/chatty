@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Chatty</title>
+    <style>
+      ul {
+        list-style-type: none;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <input id="sender" type="text"/>
+    <input id="message" type="text"/>
+    <input id="send" type="button" value="Send"/>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      function createMessageLi(message) {
+        return
+          "<li class=\"message\">" + 
+            "<p class=\"message-sender\">" +
+              message.sender +
+            "</p>" + 
+            message.content +
+          "</li>";
+      }
+      var sock = io.connect("http://localhost");
+      sock.emit("subscribe", {room: "default"});
+      sock.on("messages", function(messages) {
+        messages.forEach(function(message) {
+          $("#messages").append(createMessageLi(message));
+        });
+      });
+      $("#send").click(function() {
+        sock.emit("message", {
+          room: currentRoom,
+          content: $("#message").val(),
+          sender: $("#sender").val()
+        });
+      });
+    </script>
+
+  </body>
+</html>
