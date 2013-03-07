@@ -6,7 +6,15 @@
       ul {
         list-style-type: none;
       }
+      .message {
+      }
+      .message-sender {
+        color: #555;
+      }
     </style>
+    <script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
   </head>
   <body>
     <ul id="messages"></ul>
@@ -16,22 +24,31 @@
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 
     <script src="/socket.io/socket.io.js"></script>
+
     <script>
+      var currentRoom = "default";
+      var globId = 0;
+
       function createMessageLi(message) {
-        return
-          "<li class=\"message\">" + 
+        globId ++;
+        return ""+
+          "<li class=\"message\" id=\""+globId+">" + 
             "<p class=\"message-sender\">" +
-              message.sender +
+              message.sender + ": "+
             "</p>" + 
             message.content +
           "</li>";
       }
       var sock = io.connect("http://localhost");
-      sock.emit("subscribe", {room: "default"});
+      sock.emit("subscribe", {room: currentRoom});
       sock.on("messages", function(messages) {
+        console.log("messages!");
+        console.log(messages);
         messages.forEach(function(message) {
+          console.log("appending things!");
           $("#messages").append(createMessageLi(message));
         });
+          MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
       });
       $("#send").click(function() {
         sock.emit("message", {
@@ -39,6 +56,8 @@
           content: $("#message").val(),
           sender: $("#sender").val()
         });
+        $("#message").val("");
+        console.log("sent!");
       });
     </script>
 
