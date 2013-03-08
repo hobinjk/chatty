@@ -5,8 +5,10 @@
     <style>
       ul {
         list-style-type: none;
+        padding: 0;
       }
       .message {
+        border-bottom: 1px solid black;
       }
       #sender {
         width: 12em;
@@ -14,16 +16,26 @@
       .message-sender {
         color: #555;
       }
+      body {
+       width: 100%;
+      }
+      #center {
+        margin: 0 auto;
+        width: 800px;
+      }
     </style>
     <script type="text/javascript"
         src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
   </head>
   <body>
+    <div id="center">
     <ul id="messages"></ul>
     <input id="sender" type="text"/><br/>
     <textarea id="message" name="message" rows="10" cols="50"></textarea>
     <input id="send" type="button" value="Send"/>
+  </div>
+
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -35,14 +47,14 @@
       function createMessageLi(message) {
         globId ++;
         return ""+
-          "<li class=\"message\" id=\""+globId+">" + 
+          "<li class=\"message\" id=\""+globId+"\">" + 
             "<p class=\"message-sender\">" +
               message.sender + ": "+
             "</p>" + 
             message.content +
           "</li>";
       }
-      var sock = io.connect("http://localhost");
+      var sock = io.connect("http://18.111.124.162");
       sock.emit("subscribe", {room: currentRoom});
       sock.on("messages", function(messages) {
         console.log("messages!");
@@ -50,8 +62,8 @@
         messages.forEach(function(message) {
           console.log("appending things!");
           $("#messages").append(createMessageLi(message));
+          MathJax.Hub.Queue(["Typeset",MathJax.Hub,""+globId]);
         });
-          MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
       });
       $("#send").click(function() {
         sock.emit("message", {
@@ -63,6 +75,5 @@
         console.log("sent!");
       });
     </script>
-
   </body>
 </html>
